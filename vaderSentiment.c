@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include "utility.h"
 
 WordData* createLexiconDictionary(FILE *file){
@@ -25,7 +24,7 @@ WordData* createLexiconDictionary(FILE *file){
 
         char *charInLine = line;
 
-        //Extract the name by reading the line until we encounter a space followed by a digit or '-'
+        //Extract the name by reading the line until we encounter a tab chararacter ('\t')
         int currentWordIndex = 0;
         while(*charInLine){
             if(*charInLine == '\t'){
@@ -38,31 +37,20 @@ WordData* createLexiconDictionary(FILE *file){
         }
         lexiconDictionary[i].word[currentWordIndex] = '\0'; //Don't forget the null character
 
-        //Skip any remaining spaces before reading values 1 & 2
-        //while (*charInLine == ' '){*charInLine++;}
-
-        //printf("Done word. Word is %s\n", lexiconDictionary[i].word);
-
         //Read values 1 & 2 in the line
         if(sscanf(charInLine, "%f %f", &lexiconDictionary[i].value1, &lexiconDictionary[i].value2) != 2){
             printf("Problem reading sentiment values\n");
             break;
         }
-        
-        // if(fscanf(file, "%s %f %f", lexiconDictionary[i].word, &lexiconDictionary[i].value1, &lexiconDictionary[i].value2) != 3){
-        //     printf("Problem reading file\n");
-        //     break;
-        // }
 
- //fscan() will return the number of successful inputs it's able to read (in this case, 3). If it reads less than 3 items, then there was an issue reading the file, so it will exit the loop
+ //sscan() will return the number of successful inputs it's able to read in the line (in this case, starting from wherever charInLine is pointing to). If it reads less than 2 items (the 2 float values), then there was an issue reading the file, so it will exit the loop
 
         //Find where the array of distribution starts in the line
-        char *arrChar = strchr(charInLine, '['); //Searches for '[' in the line, and returns a pointer to '['
+        char *arrChar = strchr(charInLine, '['); //Searches for '[' in the line (starting from charInLine), and returns a pointer to '['
         if (arrChar == NULL){
             printf("Problem finding array\n");
             break;
         }
-
 
         //Parse the array of distribution
         int j=0;
@@ -76,5 +64,4 @@ WordData* createLexiconDictionary(FILE *file){
     }
 
     return lexiconDictionary;
-
 }
