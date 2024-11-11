@@ -12,16 +12,14 @@ int main(){
 
     WordData *lexiconDictionary = createLexiconDictionary(lexicon);
 
-    printf("%s, %.1f, %.5f, [", lexiconDictionary[7520].word, lexiconDictionary[7520].value1, lexiconDictionary[7520].value2);
+    printf("%s, %.1f, %.5f\n", lexiconDictionary[0].word, lexiconDictionary[0].value1, lexiconDictionary[0].value2);
 
-    for (int i=0; i < ARRAY_SIZE; i++){
-        printf("%d ", lexiconDictionary[7520].intArray[i]);
-    }
-    printf("]\n");
+    // for (int i=0; i < ARRAY_SIZE; i++){
+    //     printf("%d ", lexiconDictionary[7520].intArray[i]);
+    // }
+    // printf("]\n");
 
     fclose(lexicon);
 
-    for (int i=0; i < 7520; i++){
-        free(lexiconDictionary);
-    }
+   free(lexiconDictionary);
 }
