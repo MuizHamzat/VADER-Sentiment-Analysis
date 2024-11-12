@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <string.h>
 #include "utility.h"
 
@@ -78,23 +79,25 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *
     char *word = strtok(tokSentence, " ");
 
     //Go through each word in the sentence and determine it's value
-    int wordsInLexicon = 0;
+    float totalScore = 0;
+    int wordsInDictionary = 0;
     while(word != NULL){
         int i;
         for (i=0; i < *n; i++){
             if (strcmp(word, lexiconDictionary[i].word) == 0) {
-                printf("%s is in lexicon\n", word);
-                wordsInLexicon++;
+                wordsInDictionary++;
+                totalScore += lexiconDictionary[i].value1;
             }
-        }
-        if (wordsInLexicon == 0){
-            printf("%s is not in lexicon\n", word);
         }
 
         //Move on to the next word
         word = strtok(NULL, " ");
     }
 
+    //Calculate compound score
+    float avgScore = totalScore/wordsInDictionary;
+    float compound = totalScore/sqrt(totalScore*totalScore+15);
+
     free(tokSentence);
-    return 0;
+    return compound;
 }

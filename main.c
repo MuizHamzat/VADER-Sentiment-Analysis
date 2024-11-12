@@ -23,7 +23,9 @@ int main(){
     }
     printf("]\n");
 
-    calculateSentimentScore("This is a riskier test sentence }:-)", lexiconDictionary, lexiconSize);
+    float score = calculateSentimentScore("risky robber", lexiconDictionary, lexiconSize);
+
+    printf("%f\n", score);
 
     fclose(lexicon);
 
