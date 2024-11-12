@@ -10,16 +10,20 @@ int main(){
         return 1;
     }
 
-    WordData *lexiconDictionary = createLexiconDictionary(lexicon);
+    int *lexiconSize;
+
+    WordData *lexiconDictionary = createLexiconDictionary(lexicon, lexiconSize);
 
     //print a line from the dictionary
-    int line = 7520;
+    int line = 7216;
     printf("%s, %.1f, %.5f [", lexiconDictionary[line-1].word, lexiconDictionary[line-1].value1, lexiconDictionary[line-1].value2);
 
     for (int i=0; i < ARRAY_SIZE; i++){
         printf("%d ", lexiconDictionary[line-1].intArray[i]);
     }
     printf("]\n");
+
+    calculateSentimentScore("This is a riskier test sentence }:-)", lexiconDictionary, lexiconSize);
 
     fclose(lexicon);
 

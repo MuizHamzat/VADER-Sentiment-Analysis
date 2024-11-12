@@ -3,7 +3,7 @@
 #include <string.h>
 #include "utility.h"
 
-WordData* createLexiconDictionary(FILE *file){
+WordData* createLexiconDictionary(FILE *file, int *n){
     //Count the number of lines in the file
     int count = 0;
     char c;
@@ -11,6 +11,8 @@ WordData* createLexiconDictionary(FILE *file){
 
         if (c == '\n'){count++;}
     }
+
+    *n = count; //Save the value of count to the pointer parameter so it's accessible outside of the function
 
     //!!!Rewind the file since the pointer to the file is now at the end of the file. If you try to use fscanf() without rewinding, it will start at the end of the file
     rewind(file);
@@ -64,4 +66,35 @@ WordData* createLexiconDictionary(FILE *file){
     }
 
     return lexiconDictionary;
+}
+
+
+
+float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *n){
+    
+    //Copy the string and tokenize the copy
+    char *tokSentence = malloc(strlen(sentence)+1); //We add plus 1 for the null character
+    strcpy(tokSentence, sentence);
+    char *word = strtok(tokSentence, " ");
+
+    //Go through each word in the sentence and determine it's value
+    int wordsInLexicon = 0;
+    while(word != NULL){
+        int i;
+        for (i=0; i < *n; i++){
+            if (strcmp(word, lexiconDictionary[i].word) == 0) {
+                printf("%s is in lexicon\n", word);
+                wordsInLexicon++;
+            }
+        }
+        if (wordsInLexicon == 0){
+            printf("%s is not in lexicon\n", word);
+        }
+
+        //Move on to the next word
+        word = strtok(NULL, " ");
+    }
+
+    free(tokSentence);
+    return 0;
 }
