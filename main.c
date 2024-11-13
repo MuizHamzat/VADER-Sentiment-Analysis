@@ -14,20 +14,15 @@ int main(){
 
     WordData *lexiconDictionary = createLexiconDictionary(lexicon, lexiconSize);
 
-    //print a line from the dictionary
-    int line = 7216;
-    printf("%s, %.1f, %.5f [", lexiconDictionary[line-1].word, lexiconDictionary[line-1].value1, lexiconDictionary[line-1].value2);
-
     for (int i=0; i < ARRAY_SIZE; i++){
-        printf("%d ", lexiconDictionary[line-1].intArray[i]);
+        //For some reason, removing this for loop causes a slightly longer runtime, then prints nothing to the terminal. Will fix after implementations
     }
-    printf("]\n");
 
-    float score = calculateSentimentScore("SMART", lexiconDictionary, lexiconSize);
+    float score = calculateSentimentScore("VADER is very SMART, handsome, and FUNNY", lexiconDictionary, lexiconSize);
 
     printf("%f\n", score);
 
     fclose(lexicon);
 
-   free(lexiconDictionary);
+    free(lexiconDictionary);
 }

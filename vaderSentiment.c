@@ -33,6 +33,10 @@ WordData* createLexiconDictionary(FILE *file, int *n){
     rewind(file);
 
     WordData *lexiconDictionary = malloc(sizeof(WordData) * count);
+    if (lexiconDictionary == NULL){
+        printf("Memory allocation failed. Exiting...");
+        exit(1);
+    }
 
     //Add data from file to dictionary
     char line[100];
@@ -97,40 +101,53 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *
     float amplifier = 0;
     bool allCaps = false;
     bool negation = false;
+
+    char *upperWord = malloc(strlen(word) + 1);
+        if (upperWord == NULL){
+            printf("Memory allocation failed. Exiting...");
+            exit(1);
+        }
+
     while(word != NULL){
         int i=0;
-        //printf("%s\n", word);
-        //Check if word is in all caps
-        //char *upperCaseWord;
-        // while(word[i] != '\0'){
-        //     upperCaseWord[i] = toupper(word[i]);
-        //     i++;
-        // }
-        // upperCaseWord[i] = '\0';
-        // if (strcmp(word, upperCaseWord) == 0){allCaps = true;}
 
+        //Check if word is in all caps
+        for (i=0; word[i] != '\0'; i++){upperWord[i] = toupper(word[i]);}
+        upperWord[strlen(word)] = '\0';
+        //If word and upperWord are the same, then the word must be in ALLCAPS
+        if (strcmp(word, upperWord) == 0){
+            printf("Fix this\n");
+            allCaps = true;
+            for (i=0; word[i] != '\0';i++){word[i] = tolower(word[i]);} //Since word is in ALLCAPS, make it lowercase so it can properly be identified in the lexicon
+        }
+
+        //Find word in dictionary
         for (i=0; i < *n; i++){
             if (strcmp(word, lexiconDictionary[i].word) == 0) {
                 wordsInDictionary++;
                 totalScore += lexiconDictionary[i].value1 * (allCaps ? 1.5:1) * (negation ? -0.5:1) + (lexiconDictionary[i].value1 * amplifier);
+                //If the word was in dictionary, then any amplifiers and negations would've been applied to that word, so we "turn off" the amplifiers and neations
                 amplifier = 0;
                 negation = false;
             }
         }
-        allCaps = false;
+        allCaps = false; // We reset allCaps outside of the dictionary check because a word might be all caps, but not in the dictionary (ex: VADER). So we want to reset allCaps every word, regardless of wether it's in the dictionary or not.
 
+        //Check if word is a positive amplifier
         for (i=0; i < 11; i++){
             if (strcmp(word, posAmplifiers[i]) == 0) {
                 amplifier += 0.293;
             }
         }
 
+        //Check if word is a negative amplifier
         for (i=0; i < 9; i++){
             if (strcmp(word, negAmplifiers[i]) == 0) {
                 amplifier -= 0.293;
             }
         }
 
+        //Check if word is a negator
         for (i=0; i < 13; i++){
             if (strcmp(word, negations[i]) == 0) {
                 negation = true;
@@ -147,5 +164,6 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *
     float compound = totalScore/sqrt(totalScore*totalScore+15);
 
     free(tokSentence);
+    free(upperWord);
     return compound;
 }
