@@ -23,7 +23,7 @@ int main(){
     }
     printf("]\n");
 
-    float score = calculateSentimentScore("VADER is very smart, handsome, and funny", lexiconDictionary, lexiconSize);
+    float score = calculateSentimentScore("SMART", lexiconDictionary, lexiconSize);
 
     printf("%f\n", score);
 

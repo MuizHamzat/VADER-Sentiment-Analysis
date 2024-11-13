@@ -3,6 +3,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include "utility.h"
 
 char posAmplifiers[11][MAX_STRING_LENGTH] = { 
@@ -94,16 +95,29 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *
     float totalScore = 0;
     int wordsInDictionary = 0;
     float amplifier = 0;
+    bool allCaps = false;
+    bool negation = false;
     while(word != NULL){
+        int i=0;
         //printf("%s\n", word);
-        int i;
+        //Check if word is in all caps
+        //char *upperCaseWord;
+        // while(word[i] != '\0'){
+        //     upperCaseWord[i] = toupper(word[i]);
+        //     i++;
+        // }
+        // upperCaseWord[i] = '\0';
+        // if (strcmp(word, upperCaseWord) == 0){allCaps = true;}
+
         for (i=0; i < *n; i++){
             if (strcmp(word, lexiconDictionary[i].word) == 0) {
                 wordsInDictionary++;
-                totalScore += lexiconDictionary[i].value1 + (lexiconDictionary[i].value1 * amplifier);
+                totalScore += lexiconDictionary[i].value1 * (allCaps ? 1.5:1) * (negation ? -0.5:1) + (lexiconDictionary[i].value1 * amplifier);
                 amplifier = 0;
+                negation = false;
             }
         }
+        allCaps = false;
 
         for (i=0; i < 11; i++){
             if (strcmp(word, posAmplifiers[i]) == 0) {
@@ -114,6 +128,12 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *
         for (i=0; i < 9; i++){
             if (strcmp(word, negAmplifiers[i]) == 0) {
                 amplifier -= 0.293;
+            }
+        }
+
+        for (i=0; i < 13; i++){
+            if (strcmp(word, negations[i]) == 0) {
+                negation = true;
             }
         }
         
