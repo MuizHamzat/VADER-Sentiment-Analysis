@@ -2,7 +2,20 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <ctype.h>
 #include "utility.h"
+
+char posAmplifiers[11][MAX_STRING_LENGTH] = { 
+    "absolutely", "completely", "extremely", "really", "so", "totally", "very", "particularly", "exceptionally", "incredibly", "remarkably"
+};
+
+char negAmplifiers[9][MAX_STRING_LENGTH] = {
+    "barely", "hardly", "scarcely", "somewhat", "mildly", "slightly", "partially", "fairly", "pretty much"
+};
+
+char negations[13][MAX_STRING_LENGTH] = {
+    "not", "isn't", "doesn't", "wasn't", "shouldn't", "won't", "cannot", "can't", "nor", "neither", "without", "lack", "missing"
+};
 
 WordData* createLexiconDictionary(FILE *file, int *n){
     //Count the number of lines in the file
@@ -70,28 +83,43 @@ WordData* createLexiconDictionary(FILE *file, int *n){
 }
 
 
-
 float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *n){
     
     //Copy the string and tokenize the copy
     char *tokSentence = malloc(strlen(sentence)+1); //We add plus 1 for the null character
     strcpy(tokSentence, sentence);
-    char *word = strtok(tokSentence, " ");
+    char *word = strtok(tokSentence, " ,");
 
     //Go through each word in the sentence and determine it's value
     float totalScore = 0;
     int wordsInDictionary = 0;
+    float amplifier = 0;
     while(word != NULL){
+        //printf("%s\n", word);
         int i;
         for (i=0; i < *n; i++){
             if (strcmp(word, lexiconDictionary[i].word) == 0) {
                 wordsInDictionary++;
-                totalScore += lexiconDictionary[i].value1;
+                totalScore += lexiconDictionary[i].value1 + (lexiconDictionary[i].value1 * amplifier);
+                amplifier = 0;
             }
         }
 
+        for (i=0; i < 11; i++){
+            if (strcmp(word, posAmplifiers[i]) == 0) {
+                amplifier += 0.293;
+            }
+        }
+
+        for (i=0; i < 9; i++){
+            if (strcmp(word, negAmplifiers[i]) == 0) {
+                amplifier -= 0.293;
+            }
+        }
+        
+        //printf("%f\n", totalScore);
         //Move on to the next word
-        word = strtok(NULL, " ");
+        word = strtok(NULL, " ,");
     }
 
     //Calculate compound score

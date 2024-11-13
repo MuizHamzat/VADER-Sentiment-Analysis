@@ -13,6 +13,12 @@ typedef struct {
     int intArray[ARRAY_SIZE]; //Array of sentiment ratings
 } WordData;
 
+char posAmplifiers[11][MAX_STRING_LENGTH];
+
+char negAmplifiers[9][MAX_STRING_LENGTH];
+
+char negations[13][MAX_STRING_LENGTH];
+
 WordData* createLexiconDictionary(FILE *file, int *n);
 float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *n);
 
