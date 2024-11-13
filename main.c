@@ -10,15 +10,15 @@ int main(){
         return 1;
     }
 
-    int *lexiconSize;
+    int lexiconSize = countLines(lexicon);
 
-    WordData *lexiconDictionary = createLexiconDictionary(lexicon, lexiconSize);
+    WordData *lexiconDictionary = createLexiconDictionary(lexicon);
 
-    for (int i=0; i < ARRAY_SIZE; i++){
-        //For some reason, removing this for loop causes a slightly longer runtime, then prints nothing to the terminal. Will fix after implementations
-    }
+    // for (int i=0; i < ARRAY_SIZE; i++){
+    //     //For some reason, removing this for loop causes a slightly longer runtime, then prints nothing to the terminal. Will fix after implementations
+    // }
 
-    float score = calculateSentimentScore("VADER is very SMART, handsome, and FUNNY", lexiconDictionary, lexiconSize);
+    float score = calculateSentimentScore("SMART", lexiconDictionary, lexiconSize);
 
     printf("%f\n", score);
 

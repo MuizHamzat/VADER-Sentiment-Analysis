@@ -18,19 +18,22 @@ char negations[13][MAX_STRING_LENGTH] = {
     "not", "isn't", "doesn't", "wasn't", "shouldn't", "won't", "cannot", "can't", "nor", "neither", "without", "lack", "missing"
 };
 
-WordData* createLexiconDictionary(FILE *file, int *n){
-    //Count the number of lines in the file
+int countLines(FILE *file){
     int count = 0;
     char c;
     while((c = fgetc(file)) != EOF){//fgetc() returns each character in the file (in sequence) every time it's called. So if there is a text file that just says "Hello World!", it will return 'H' in the first loop, then 'e', then 'l'. Once it reaches the end of the file, it will return 'EOF'.
 
         if (c == '\n'){count++;}
     }
-
-    *n = count; //Save the value of count to the pointer parameter so it's accessible outside of the function
-
     //!!!Rewind the file since the pointer to the file is now at the end of the file. If you try to use fscanf() without rewinding, it will start at the end of the file
     rewind(file);
+    return count;
+}
+
+WordData* createLexiconDictionary(FILE *file){
+    //Count the number of lines in the file
+    int count = countLines(file);
+
 
     WordData *lexiconDictionary = malloc(sizeof(WordData) * count);
     if (lexiconDictionary == NULL){
@@ -88,7 +91,7 @@ WordData* createLexiconDictionary(FILE *file, int *n){
 }
 
 
-float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *n){
+float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n){
     
     //Copy the string and tokenize the copy
     char *tokSentence = malloc(strlen(sentence)+1); //We add plus 1 for the null character
@@ -116,13 +119,12 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *
         upperWord[strlen(word)] = '\0';
         //If word and upperWord are the same, then the word must be in ALLCAPS
         if (strcmp(word, upperWord) == 0){
-            printf("Fix this\n");
             allCaps = true;
             for (i=0; word[i] != '\0';i++){word[i] = tolower(word[i]);} //Since word is in ALLCAPS, make it lowercase so it can properly be identified in the lexicon
         }
 
         //Find word in dictionary
-        for (i=0; i < *n; i++){
+        for (i=0; i < n; i++){
             if (strcmp(word, lexiconDictionary[i].word) == 0) {
                 wordsInDictionary++;
                 totalScore += lexiconDictionary[i].value1 * (allCaps ? 1.5:1) * (negation ? -0.5:1) + (lexiconDictionary[i].value1 * amplifier);

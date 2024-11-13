@@ -19,7 +19,8 @@ char negAmplifiers[9][MAX_STRING_LENGTH];
 
 char negations[13][MAX_STRING_LENGTH];
 
-WordData* createLexiconDictionary(FILE *file, int *n);
-float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int *n);
+int countLines(FILE *file);
+WordData* createLexiconDictionary(FILE *file);
+float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n);
 
 #endif
