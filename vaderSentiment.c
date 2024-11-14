@@ -107,16 +107,31 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
     bool negation = false;
     bool negationAllCaps = false;
 
-    //Allocate memory for an uppercase version of the word
-    char *upperWord = malloc(strlen(word) + 1);
-        if (upperWord == NULL){
-            printf("Memory allocation failed. Exiting...");
-            exit(1);
-        }
 
     while(word != NULL){
-        int i=0;
 
+        //Check if it has exclamation marks in the string (or ends in a period)
+        //We can iterate through the string and replace all the exclamation marks with other characters in the string, effectively removing the exclamation marks and leaving just the word
+        int i=0,j=0;
+        while (word[i] != '\0'){
+            if (word[i] == '!'){numOfExclamations++;}
+            else if (word[i] != '.'){ //Get rid of periods
+                word[j] = word[i]; //Copy the character i is on to j. word[j] will never be '!' since we skip copying any instances of '!'
+                j++;
+            }
+            i++;
+        }
+        //Replace word[j] with '\0', which will end the string at j and get rid of any '!'s at the end
+        word[j] = '\0';
+        
+        //Allocate memory for an uppercase version of the word
+        char *upperWord = malloc(strlen(word) + 1);
+            if (upperWord == NULL){
+                printf("Memory allocation failed. Exiting...");
+                exit(1);
+            }
+        
+        
         //Check if word is in all caps
         for (i=0; word[i] != '\0'; i++){upperWord[i] = toupper(word[i]);}
         upperWord[strlen(word)] = '\0';
@@ -125,20 +140,6 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
         
         for (i=0; word[i] != '\0';i++){word[i] = tolower(word[i]);} //If word is in ALLCAPS (or titled), make it lowercase so it can properly be identified in the lexicon
 
-        //If word isn't found in dictionary, check if it has exclamation marks in the string
-        //We can iterate through the string and replace all the exclamation marks with other characters in the string, effectively removing the exclamation marks and leaving just the word
-        int j=0;
-        i=0;
-        while (word[i] != '\0'){
-            if (word[i] == '!'){numOfExclamations++;}
-            else{
-                word[j] = word[i]; //Copy the character i is on to j. word[j] will never be '!' since we skip copying any instances of '!'
-                j++;
-            }
-            i++;
-        }
-        //Replace word[j] with '\0', which will end the string at j and get rid of any '!'s at the end
-        word[j] = '\0';
 
         //Find word in dictionary
         for (i=0; i < n; i++){
@@ -180,13 +181,14 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
         //printf("%f\n", totalScore);
         //Move on to the next word
         word = strtok(NULL, " ,");
+        free(upperWord);
     }
 
     //Calculate compound score
+    printf("%f\n", totalScore);
     float avgScore = totalScore/wordsInDictionary;
     float compound = totalScore/sqrt(totalScore*totalScore+15);
 
     free(tokSentence);
-    free(upperWord);
     return compound;
 }
