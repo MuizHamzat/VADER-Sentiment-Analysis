@@ -91,6 +91,7 @@ WordData* createLexiconDictionary(FILE *file){
 }
 
 
+
 float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n){
     
     //Copy the string and tokenize the copy
@@ -107,9 +108,9 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
     bool negation = false;
     bool negationAllCaps = false;
 
-
     while(word != NULL){
 
+        int i=0,j=0;
         //Check if it has exclamation marks in the string (or ends in a period)
         //We can iterate through the string and replace all the exclamation marks with other characters in the string, effectively removing the exclamation marks and leaving just the word
         int i=0,j=0;
@@ -146,9 +147,8 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
             if (strcmp(word, lexiconDictionary[i].word) == 0) {
                 wordsInDictionary++;
                 totalScore += lexiconDictionary[i].value1 * (allCaps ? 1.5:1) * (negation ? -0.5 * (negationAllCaps ? 1.5:1):1) + (lexiconDictionary[i].value1 * amplifier) + 0.292*numOfExclamations;
-                //If the word was in dictionary, then any amplifiers and negations would've been applied to that word, so we "turn off" the amplifiers and neations
+                //If the word was in dictionary, then any amplifiers would've been applied to that word, so we "turn off" the amplifiers. If there is a negation, it will be applied to the rest of the sentence
                 amplifier = 0;
-                negation = false;
                 numOfExclamations=0;
             }
         }
@@ -185,7 +185,6 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
     }
 
     //Calculate compound score
-    printf("%f\n", totalScore);
     float avgScore = totalScore/wordsInDictionary;
     float compound = totalScore/sqrt(totalScore*totalScore+15);
 
