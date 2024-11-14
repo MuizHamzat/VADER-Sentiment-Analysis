@@ -13,7 +13,7 @@ typedef struct {
     int intArray[ARRAY_SIZE]; //Array of sentiment ratings
 } WordData;
 
-char posAmplifiers[11][MAX_STRING_LENGTH];
+char posAmplifiers[13][MAX_STRING_LENGTH];
 
 char negAmplifiers[9][MAX_STRING_LENGTH];
 

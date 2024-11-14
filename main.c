@@ -18,7 +18,7 @@ int main(){
     //     //For some reason, removing this for loop causes a slightly longer runtime, then prints nothing to the terminal. Will fix after implementations
     // }
 
-    float score = calculateSentimentScore("SMART", lexiconDictionary, lexiconSize);
+    float score = calculateSentimentScore("cool", lexiconDictionary, lexiconSize);
 
     printf("%f\n", score);
 
