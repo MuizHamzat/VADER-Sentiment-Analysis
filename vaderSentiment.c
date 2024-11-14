@@ -91,7 +91,6 @@ WordData* createLexiconDictionary(FILE *file){
 }
 
 
-
 float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n){
     
     //Copy the string and tokenize the copy
@@ -100,6 +99,7 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
     char *word = strtok(tokSentence, " ,");
 
     //Go through each word in the sentence and determine it's value
+
     float totalScore = 0;
     int wordsInDictionary = 0;
     int numOfExclamations=0;
@@ -108,9 +108,9 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
     bool negation = false;
     bool negationAllCaps = false;
 
+    //Main loop. This loop will run for each word in the sentence
     while(word != NULL){
-
-        int i=0,j=0;
+        //PUNCTUATION~~~~~
         //Check if it has exclamation marks in the string (or ends in a period)
         //We can iterate through the string and replace all the exclamation marks with other characters in the string, effectively removing the exclamation marks and leaving just the word
         int i=0,j=0;
@@ -125,13 +125,13 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
         //Replace word[j] with '\0', which will end the string at j and get rid of any '!'s at the end
         word[j] = '\0';
         
+        //ALL CAPS~~~~~
         //Allocate memory for an uppercase version of the word
         char *upperWord = malloc(strlen(word) + 1);
             if (upperWord == NULL){
                 printf("Memory allocation failed. Exiting...");
                 exit(1);
             }
-        
         
         //Check if word is in all caps
         for (i=0; word[i] != '\0'; i++){upperWord[i] = toupper(word[i]);}
@@ -142,6 +142,7 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
         for (i=0; word[i] != '\0';i++){word[i] = tolower(word[i]);} //If word is in ALLCAPS (or titled), make it lowercase so it can properly be identified in the lexicon
 
 
+        //SCORE CALCULATION~~~~~
         //Find word in dictionary
         for (i=0; i < n; i++){
             if (strcmp(word, lexiconDictionary[i].word) == 0) {
@@ -153,20 +154,19 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
             }
         }
 
+        //INTENSIFIERS
         //Check if word is a positive amplifier
         for (i=0; i < 13; i++){
             if (strcmp(word, posAmplifiers[i]) == 0) {
                 amplifier += 0.293 * (allCaps ? 1.5:1);
             }
         }
-
         //Check if word is a negative amplifier
         for (i=0; i < 9; i++){
             if (strcmp(word, negAmplifiers[i]) == 0) {
                 amplifier -= 0.293 * (allCaps ? 1.5:1);
             }
         }
-
         //Check if word is a negator
         for (i=0; i < 13; i++){
             if (strcmp(word, negations[i]) == 0) {
