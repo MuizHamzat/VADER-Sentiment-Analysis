@@ -21,7 +21,7 @@ char negations[13][MAX_STRING_LENGTH] = {
 int countLines(FILE *file){
     int count = 0;
     char c;
-    while((c = fgetc(file)) != EOF){//fgetc() returns each character in the file (in sequence) every time it's called. So if there is a text file that just says "Hello World!", it will return 'H' in the first loop, then 'e', then 'l'. Once it reaches the end of the file, it will return 'EOF'.
+    while((c = (char)fgetc(file)) != EOF){//fgetc() returns each character in the file (in sequence) every time it's called. So if there is a text file that just says "Hello World!", it will return 'H' in the first loop, then 'e', then 'l'. Once it reaches the end of the file, it will return 'EOF'.
 
         if (c == '\n'){count++;}
     }
@@ -35,7 +35,7 @@ WordData* createLexiconDictionary(FILE *file){
     int count = countLines(file);
 
 
-    WordData *lexiconDictionary = malloc(sizeof(WordData) * count);
+    WordData *lexiconDictionary = malloc(sizeof(WordData) * (unsigned int)count);
     if (lexiconDictionary == NULL){
         printf("Memory allocation failed. Exiting...");
         exit(1);
@@ -134,12 +134,12 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
             }
         
         //Check if word is in all caps
-        for (i=0; word[i] != '\0'; i++){upperWord[i] = toupper(word[i]);}
+        for (i=0; word[i] != '\0'; i++){upperWord[i] = (char)toupper(word[i]);}
         upperWord[strlen(word)] = '\0';
         //If word and upperWord are the same, then the word must be in ALLCAPS
         if (strcmp(word, upperWord) == 0){allCaps = true;}
         
-        for (i=0; word[i] != '\0';i++){word[i] = tolower(word[i]);} //If word is in ALLCAPS (or titled), make it lowercase so it can properly be identified in the lexicon
+        for (i=0; word[i] != '\0';i++){word[i] = (char)tolower(word[i]);} //If word is in ALLCAPS (or titled), make it lowercase so it can properly be identified in the lexicon
 
 
         //SCORE CALCULATION~~~~~
@@ -147,7 +147,7 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
         for (i=0; i < n; i++){
             if (strcmp(word, lexiconDictionary[i].word) == 0) {
                 wordsInDictionary++;
-                totalScore += lexiconDictionary[i].value1 * (allCaps ? 1.5:1) * (negation ? -0.5 * (negationAllCaps ? 1.5:1):1) + (lexiconDictionary[i].value1 * amplifier) + 0.292*numOfExclamations;
+                totalScore += lexiconDictionary[i].value1 * (allCaps ? 1.5f:1.0f) * (negation ? -0.5f * (negationAllCaps ? 1.5f:1.0f):1.0f) + (lexiconDictionary[i].value1 * amplifier) + 0.292f*(float)numOfExclamations;
                 //If the word was in dictionary, then any amplifiers would've been applied to that word, so we "turn off" the amplifiers. If there is a negation, it will be applied to the rest of the sentence
                 amplifier = 0;
                 numOfExclamations=0;
@@ -158,13 +158,13 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
         //Check if word is a positive amplifier
         for (i=0; i < 13; i++){
             if (strcmp(word, posAmplifiers[i]) == 0) {
-                amplifier += 0.293 * (allCaps ? 1.5:1);
+                amplifier += (float)0.293 * (allCaps ? 1.5f:1.0f);
             }
         }
         //Check if word is a negative amplifier
         for (i=0; i < 9; i++){
             if (strcmp(word, negAmplifiers[i]) == 0) {
-                amplifier -= 0.293 * (allCaps ? 1.5:1);
+                amplifier -= (float)0.293 * (allCaps ? 1.5f:1.0f);
             }
         }
         //Check if word is a negator
@@ -178,15 +178,13 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
         }
         allCaps = false; // We reset allCaps outside of the dictionary check because a word might be all caps, but not in the dictionary (ex: VADER). So we want to reset allCaps every word, regardless of wether it's in the dictionary or not. We also want to consider if any of the intensifier words should be boosted by allCaps
         
-        //printf("%f\n", totalScore);
         //Move on to the next word
         word = strtok(NULL, " ,");
         free(upperWord);
     }
 
     //Calculate compound score
-    float avgScore = totalScore/wordsInDictionary;
-    float compound = totalScore/sqrt(totalScore*totalScore+15);
+    float compound = totalScore/sqrtf(totalScore*totalScore+15.0f);
 
     free(tokSentence);
     return compound;
