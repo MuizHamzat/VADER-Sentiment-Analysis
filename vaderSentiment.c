@@ -48,7 +48,7 @@ WordData* createLexiconDictionary(FILE *file){
 
         char *charInLine = line;
 
-        //Extract the name by reading the line until we encounter a tab chararacter ('\t')
+        //Extract the word's string by reading the line until we encounter a tab chararacter ('\t')
         int currentWordIndex = 0;
         while(*charInLine){
             if(*charInLine == '\t'){
