@@ -21,7 +21,7 @@ int main(){
     TestCase("VADER is smart, handsome, and funny!", lexiconDictionary, lexiconSize);
     TestCase("VADER is very smart, handsome, and funny.", lexiconDictionary, lexiconSize);
     TestCase("VADER is VERY SMART, handsome, and FUNNY.", lexiconDictionary, lexiconSize);
-    TestCase("VADER is VERY SMART, handsome, and funny!!!", lexiconDictionary, lexiconSize);
+    TestCase("VADER is VERY SMART, handsome, and FUNNY!!!", lexiconDictionary, lexiconSize);
     TestCase("VADER is VERY SMART, uber handsome, and FRIGGIN FUNNY!!!.", lexiconDictionary, lexiconSize);
     TestCase("VADER is not smart, handsome, nor funny.", lexiconDictionary, lexiconSize);
     TestCase("At least it isn't a horrible book.", lexiconDictionary, lexiconSize);

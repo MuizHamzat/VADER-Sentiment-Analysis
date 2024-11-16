@@ -147,7 +147,8 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
         for (i=0; i < n; i++){
             if (strcmp(word, lexiconDictionary[i].word) == 0) {
                 wordsInDictionary++;
-                totalScore += lexiconDictionary[i].value1 * (allCaps ? 1.5f:1.0f) * (negation ? -0.5f * (negationAllCaps ? 1.5f:1.0f):1.0f) + (lexiconDictionary[i].value1 * amplifier) + 0.292f*(float)numOfExclamations;
+                totalScore += lexiconDictionary[i].value1 * (allCaps ? 1.5f:1.0f) * (negation ? -0.5f * (negationAllCaps ? 1.5f:1.0f):1.0f) + (lexiconDictionary[i].value1 * amplifier);
+                totalScore += (totalScore/fabsf(totalScore)) * 0.292f*(float)numOfExclamations;
                 //If the word was in dictionary, then any amplifiers would've been applied to that word, so we "turn off" the amplifiers. If there is a negation, it will be applied to the rest of the sentence
                 amplifier = 0;
                 numOfExclamations=0;
