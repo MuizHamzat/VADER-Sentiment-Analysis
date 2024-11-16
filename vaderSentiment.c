@@ -116,7 +116,7 @@ float calculateSentimentScore(char *sentence, WordData *lexiconDictionary, int n
         int i=0,j=0;
         while (word[i] != '\0'){
             if (word[i] == '!'){numOfExclamations++;}
-            else if (word[i] != '.'){ //Get rid of periods
+            else if (word[i] != '.' && word[i] != '?'){ //Get rid of periods
                 word[j] = word[i]; //Copy the character i is on to j. word[j] will never be '!' since we skip copying any instances of '!'
                 j++;
             }
